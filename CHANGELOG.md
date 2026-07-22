@@ -1,10 +1,14 @@
-# Unreleased
+# 0.4.0
 
 ## Features
 
-- Added `NewtonVbdSceneAPI`, which extends `NewtonSceneAPI` with configuration for Newton's VBD (Vertex Block Descent) solver.
-  - Exposes a minimal rigid/AVBD attribute set under `newton:vbd:rigid:` (`contactHistory`, joint stiffness, joint damping).
-  - Applying `NewtonVbdSceneAPI` implicitly applies `NewtonSceneAPI` as well.
+- Added `newton:jointsAddMobility` attribute to `NewtonArticulationRootAPI`
+  - This attribute controls whether joints within this articulation add mobility or constrain it, which affects how engines should parse the articulation into their native formulation.
+  - When false (default), joints constrain degrees of freedom between otherwise-free bodies.
+  - When true, multiple single-DOF joints connecting the same body pair (stacked joints) add degrees of freedom to bodies that would otherwise be rigidly attached.
+- Added `NewtonJointAPI`, which applies on top of a `PhysicsJoint`, providing joint configuration for armature, passive dynamics, and limit spring response
+  - All attributes broadcast uniformly to every DOF of the joint.
+  - If per-DOF variance is required for a multi-DOF joint, it is recommended to "break apart" the joint into a stack of single-DOF joints (i.e. revolute or prismatic), and set `NewtonArticulationRootAPI.newton:jointsAddMobility = True`.
 
 # 0.3.1
 
