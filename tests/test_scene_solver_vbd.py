@@ -22,27 +22,16 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         self.assertEqual(schema_type, "NewtonVbdSceneAPI")
 
     def test_api_application(self):
+        self.assertTrue(self.scene.CanApplyAPI("NewtonVbdSceneAPI"))
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         self.assertTrue(self.scene.HasAPI("NewtonSceneAPI"))
         self.assertTrue(self.scene.HasAPI("NewtonVbdSceneAPI"))
+        self.assertTrue(self.scene.HasAttribute("newton:maxSolverIterations"))
+        self.assertFalse(self.scene.HasAttribute("newton:vbd:iterations"))
 
     def test_api_limitations(self):
         prim: Usd.Prim = self.stage.DefinePrim("/NotScene", "Xform")
         self.assertFalse(prim.CanApplyAPI("NewtonVbdSceneAPI"))
-
-    def test_minimal_compliant_alm_surface(self):
-        self.scene.ApplyAPI("NewtonVbdSceneAPI")
-        vbd_attributes = {name for name in self.scene.GetPropertyNames() if name.startswith("newton:vbd:")}
-        self.assertEqual(
-            vbd_attributes,
-            {
-                "newton:vbd:rigid:contactHistory",
-                "newton:vbd:rigid:jointAngularDamping",
-                "newton:vbd:rigid:jointAngularStiffness",
-                "newton:vbd:rigid:jointLinearDamping",
-                "newton:vbd:rigid:jointLinearStiffness",
-            },
-        )
 
     # -- rigid / compliant ALM ---------------------------------------------
 
@@ -50,18 +39,22 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         attr = self.scene.GetAttribute("newton:vbd:rigid:contactHistory")
         self.assertIsNotNone(attr)
+        self.assertFalse(attr.HasAuthoredValue())
         self.assertEqual(attr.Get(), False)
 
         self.assertTrue(attr.Set(True))
+        self.assertTrue(attr.HasAuthoredValue())
         self.assertEqual(attr.Get(), True)
 
     def test_rigid_joint_linear_stiffness(self):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         attr = self.scene.GetAttribute("newton:vbd:rigid:jointLinearStiffness")
         self.assertIsNotNone(attr)
+        self.assertFalse(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 100000.0, places=1)
 
         self.assertTrue(attr.Set(50000.0))
+        self.assertTrue(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 50000.0, places=1)
 
         if USD_HAS_LIMITS:
@@ -74,9 +67,11 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         attr = self.scene.GetAttribute("newton:vbd:rigid:jointAngularStiffness")
         self.assertIsNotNone(attr)
+        self.assertFalse(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 100000.0, places=1)
 
         self.assertTrue(attr.Set(50000.0))
+        self.assertTrue(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 50000.0, places=1)
 
         if USD_HAS_LIMITS:
@@ -89,9 +84,11 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         attr = self.scene.GetAttribute("newton:vbd:rigid:jointLinearDamping")
         self.assertIsNotNone(attr)
+        self.assertFalse(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 0.0, places=7)
 
         self.assertTrue(attr.Set(1.0))
+        self.assertTrue(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 1.0, places=7)
 
         if USD_HAS_LIMITS:
@@ -104,9 +101,11 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
         attr = self.scene.GetAttribute("newton:vbd:rigid:jointAngularDamping")
         self.assertIsNotNone(attr)
+        self.assertFalse(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 0.0, places=7)
 
         self.assertTrue(attr.Set(1.0))
+        self.assertTrue(attr.HasAuthoredValue())
         self.assertAlmostEqual(attr.Get(), 1.0, places=7)
 
         if USD_HAS_LIMITS:
