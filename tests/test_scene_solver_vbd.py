@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Newton Developers
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Newton Developers
 # SPDX-License-Identifier: Apache-2.0
 
 import unittest
@@ -30,7 +30,21 @@ class TestNewtonVbdSceneAPI(unittest.TestCase):
         prim: Usd.Prim = self.stage.DefinePrim("/NotScene", "Xform")
         self.assertFalse(prim.CanApplyAPI("NewtonVbdSceneAPI"))
 
-    # -- rigid / AVBD -------------------------------------------------------
+    def test_minimal_compliant_alm_surface(self):
+        self.scene.ApplyAPI("NewtonVbdSceneAPI")
+        vbd_attributes = {name for name in self.scene.GetPropertyNames() if name.startswith("newton:vbd:")}
+        self.assertEqual(
+            vbd_attributes,
+            {
+                "newton:vbd:rigid:contactHistory",
+                "newton:vbd:rigid:jointAngularDamping",
+                "newton:vbd:rigid:jointAngularStiffness",
+                "newton:vbd:rigid:jointLinearDamping",
+                "newton:vbd:rigid:jointLinearStiffness",
+            },
+        )
+
+    # -- rigid / compliant ALM ---------------------------------------------
 
     def test_rigid_contact_history(self):
         self.scene.ApplyAPI("NewtonVbdSceneAPI")
