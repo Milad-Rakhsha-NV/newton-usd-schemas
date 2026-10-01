@@ -352,8 +352,9 @@ class "NewtonVbdSceneAPI" (
     uniform bool newton:vbd:rigid:contactHistory = false (
         doc = """Whether to persist numeric body-body contact state across steps for warm-starting.
 
-        This requires collision-pipeline contact matching. Contact geometry
-        remains owned by the collision pipeline."""
+        This requires collision-pipeline contact matching configured as
+        `contact_matching="latest"` or `contact_matching="sticky"`. Contact
+        geometry remains owned by the collision pipeline."""
     )
 
     uniform float newton:vbd:rigid:jointLinearStiffness = 100000.0 (
@@ -374,7 +375,7 @@ class "NewtonVbdSceneAPI" (
 
         Values must be finite.
         Range: [0, inf)
-        Units: torque / radian"""
+        Units: torque / radians"""
         limits = {
             dictionary hard = {
                 float minimum = 0
@@ -400,7 +401,7 @@ class "NewtonVbdSceneAPI" (
 
         Values must be finite.
         Range: [0, inf)
-        Units: torque * time / radian"""
+        Units: torque * time / radians"""
         limits = {
             dictionary hard = {
                 float minimum = 0
